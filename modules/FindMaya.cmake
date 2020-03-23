@@ -44,8 +44,10 @@
 
 # Set a default Maya version if not specified
 if(NOT DEFINED MAYA_VERSION)
-    set(MAYA_VERSION 2019 CACHE STRING "Maya version")
+    set(MAYA_VERSION 2018 CACHE STRING "Maya version")
 endif()
+
+message("Searching for ${MAYA_VERSION} devkit")
 
 # OS Specific environment setup
 set(MAYA_COMPILE_DEFINITIONS "REQUIRE_IOSTREAM;_BOOL")
