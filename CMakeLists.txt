@@ -15,14 +15,15 @@ file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/shaders")
 
 # Set this to the Maya version you have installed as it will use this version code to 
 # determine file paths in the FindMaya.cmake script
-set(MAYA_VERSION 2018 CACHE STRING "Maya version")
+set(MAYA_VERSION 2019 CACHE STRING "Maya version")
 
 if(WIN32)
     set(MAYA_PLUGIN_OUTPUT_DIR "C:/Users/Newyork167/Documents/maya/plug-ins")
-    set(MAYA_PYTHON_BIN "C:/Program Files/Autodesk/Maya2018/bin/mayapy.exe")
+    set(MAYA_PYTHON_BIN "C:/Program Files/Autodesk/Maya${MAYA_VERSION}/bin/mayapy.exe")
 elseif(APPLE)
 	# This is a generic folder created by Maya for dumping plug-ins into on OSX
     set(MAYA_PLUGIN_OUTPUT_DIR "/Users/Shared/Autodesk/maya/plug-ins")
+    set(MAYA_PYTHON_BIN "/Applications/Autodesk/maya${MAYA_VERSION}/Maya.app/Contents/bin/mayapy")
 endif(WIN32)
 
 # Glob together all the source code / GLSL files
@@ -70,7 +71,9 @@ target_include_directories(${PROJECT_NAME} PRIVATE Maya::Maya)
 MAYA_PLUGIN(${PROJECT_NAME})
 
 # Run python script to unload this plugin from Maya
-execute_process(COMMAND ${MAYA_PYTHON_BIN} scripts/load_plugin.py "-p \"${PROJECT_NAME}\"" "-u"
+message("Unloading Plugin from Maya")
+SET(PLUGIN_LOADER_ARGS "-p ${PROJECT_NAME}" "-u")
+execute_process(COMMAND ${MAYA_PYTHON_BIN} scripts/load_plugin.py ${PLUGIN_LOADER_ARGS}
     WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
 
 # Set output directory
@@ -89,5 +92,7 @@ elseif(APPLE)
 endif(WIN32)
 
 # Run python script to load the plugin back into Maya
-execute_process(COMMAND ${MAYA_PYTHON_BIN} scripts/load_plugin.py  "-p \"${PROJECT_NAME}\"" "-l"
+message("Loading Plugin from Maya")
+SET(PLUGIN_LOADER_ARGS "-p ${PROJECT_NAME}" "-l")
+execute_process(COMMAND ${MAYA_PYTHON_BIN} scripts/load_plugin.py  ${PLUGIN_LOADER_ARGS}
     WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
