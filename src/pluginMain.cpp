@@ -26,15 +26,6 @@ void setupMenu(std::string menuName) {
     menuCommand += "menu - label \"Help\" - helpMenu true;";
     menuCommand += "menuItem - label \"About Application...\";";*/
 
-    std::ifstream file("menu/radialMenu.py"); //file just has some sentences
-    if (!file) {
-        cout << "unable to open file";
-    }
-    std::string file_str;
-    while (getline(file, file_str)) {
-        menuCommand += file_str;
-    }
-
     // Execute the MEL code
     MString commandString = MString(menuCommand.c_str());
     MGlobal::executeCommand(commandString);
