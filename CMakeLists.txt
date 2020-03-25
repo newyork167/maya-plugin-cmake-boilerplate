@@ -9,10 +9,13 @@ set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/modules)
 # Set the source and library file paths
 set(SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
 set(LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/lib")
-set(MEL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/scripts/MEL")
+set(SCRIPTS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/scripts")
 
 # Make a shaders directory to put GLSL files
 file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/shaders")
+
+# Make a directory for the setup scripts
+file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/scripts")
 
 # Set this to the Maya version you have installed as it will use this version code to 
 # determine file paths in the FindMaya.cmake script
@@ -75,7 +78,7 @@ MAYA_PLUGIN(${PROJECT_NAME})
 # Run python script to unload this plugin from Maya
 message("Unloading Plugin from Maya")
 SET(PLUGIN_LOADER_ARGS "-p ${PROJECT_NAME}" "-u")
-execute_process(COMMAND ${MAYA_PYTHON_BIN} scripts/load_plugin.py ${PLUGIN_LOADER_ARGS}
+execute_process(COMMAND ${MAYA_PYTHON_BIN} dev/scripts/load_plugin.py ${PLUGIN_LOADER_ARGS}
     WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
 
 # Set output directory
@@ -96,5 +99,5 @@ endif(WIN32)
 # Run python script to load the plugin back into Maya
 message("Loading Plugin from Maya")
 SET(PLUGIN_LOADER_ARGS "-p ${PROJECT_NAME}" "-l")
-execute_process(COMMAND ${MAYA_PYTHON_BIN} scripts/load_plugin.py  ${PLUGIN_LOADER_ARGS}
+execute_process(COMMAND ${MAYA_PYTHON_BIN} dev/scripts/load_plugin.py  ${PLUGIN_LOADER_ARGS}
     WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
