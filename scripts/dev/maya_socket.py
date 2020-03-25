@@ -5,10 +5,10 @@ import sys
 HOST = '127.0.0.1' # the local host
 PORT = 4434 # The same port as used by the server
 
-# Run the following if you do not already have an MEL connection
-#    import maya.cmds as cmds
-#    if not cmds.commandPort(':4434', q=True):
-#        cmds.commandPort(n=':4434')
+# Run the following in Maya if you do not already have an MEL connection
+#import maya.cmds as cmds
+#if not cmds.commandPort(':4434', q=True):
+#    cmds.commandPort(n=':4434')
 
 def SendCommand(command, host=HOST, port=PORT):
     ADDR=(HOST,PORT)

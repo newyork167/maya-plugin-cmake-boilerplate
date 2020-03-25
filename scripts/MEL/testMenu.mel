@@ -1,0 +1,5 @@
+menu -p "MayaWindow" -label "Test Plugin";
+	menuItem -label "Run";
+	menuItem - label "Save";
+	menuItem - divider true;
+	menuItem - label "Quit";

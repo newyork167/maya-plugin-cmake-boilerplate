@@ -1,0 +1,20 @@
+global proc MyMenu()
+{
+    global string $myMenuMain;
+        if (`menu -exists $myMenuMain`)
+           deleteUI $myMenuMain;
+    string $name = "MyMenu";
+ 
+    //to hook your menu into the main window
+    global string $gMainWindow;
+    $myMenuMain = `menu -p $gMainWindow -tearOff true -l $name`;
+ 
+    //here you can insert your labels and commands for the menu items. Replace test_01, 02, 03 with your own mel scripts.
+        menuItem -p $myMenuMain -l "Cube" -c "source test_01.mel";
+        menuItem -p $myMenuMain -l "Sphere" -c "source test_02.mel";
+        menuItem -p $myMenuMain -l "Torus" -c "source test_03.mel";
+}
+;
+ 
+//calling the proc, so that the script runs
+MyMenu;

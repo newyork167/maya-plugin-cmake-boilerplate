@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.7)
 
 # Set the project name - This is used later in this script to set filenames
-project(FluidSimPlugin)
+project(TestPlugin)
 
 # Set the cmake modules path to find the cmake Find* files
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/modules)
@@ -9,6 +9,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/modules)
 # Set the source and library file paths
 set(SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
 set(LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/lib")
+set(MEL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/scripts/MEL")
 
 # Make a shaders directory to put GLSL files
 file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/shaders")
@@ -18,7 +19,8 @@ file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/shaders")
 set(MAYA_VERSION 2019 CACHE STRING "Maya version")
 
 if(WIN32)
-    set(MAYA_PLUGIN_OUTPUT_DIR "C:/Users/Newyork167/Documents/maya/plug-ins")
+    set(USERNAME $ENV{USERNAME})
+    set(MAYA_PLUGIN_OUTPUT_DIR "C:/Users/${USERNAME}/Documents/maya/plug-ins")
     set(MAYA_PYTHON_BIN "C:/Program Files/Autodesk/Maya${MAYA_VERSION}/bin/mayapy.exe")
 elseif(APPLE)
 	# This is a generic folder created by Maya for dumping plug-ins into on OSX

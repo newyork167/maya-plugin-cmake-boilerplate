@@ -3,6 +3,10 @@
 #include <maya/MPxCommand.h>
 #include <maya/MStreamUtils.h>
 #include <maya/MArgList.h>
+#include <maya/MGlobal.h>
+#include <fstream>
+#include <iostream> 
+#include <string>
 
 /**
  * \brief This is a basic Maya command setup, you can also use DeclareSimpleCommand for very simple command classes
