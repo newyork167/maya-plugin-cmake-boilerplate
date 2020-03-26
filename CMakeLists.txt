@@ -19,14 +19,14 @@ file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/scripts")
 
 # Set this to the Maya version you have installed as it will use this version code to 
 # determine file paths in the FindMaya.cmake script
-set(MAYA_VERSION 2019 CACHE STRING "Maya version")
+set(MAYA_VERSION 2018 CACHE STRING "Maya version")
 
 if(WIN32)
     set(USERNAME $ENV{USERNAME})
     set(MAYA_PLUGIN_OUTPUT_DIR "C:/Users/${USERNAME}/Documents/maya/plug-ins")
     set(MAYA_PYTHON_BIN "C:/Program Files/Autodesk/Maya${MAYA_VERSION}/bin/mayapy.exe")
 elseif(APPLE)
-	# This is a generic folder created by Maya for dumping plug-ins into on OSX
+    # This is a generic folder created by Maya for dumping plug-ins into on OSX
     set(MAYA_PLUGIN_OUTPUT_DIR "/Users/Shared/Autodesk/maya/plug-ins")
     set(MAYA_PYTHON_BIN "/Applications/Autodesk/maya${MAYA_VERSION}/Maya.app/Contents/bin/mayapy")
 endif(WIN32)
@@ -54,15 +54,15 @@ file(GLOB_RECURSE SHADERS
 foreach(SHADER ${SHADERS})
     message(${SHADER})
     if(WIN32)
-		# For windows we will use the built in configure_file method to copy shaders over
+        # For windows we will use the built in configure_file method to copy shaders over
         get_filename_component(SHADERNAME ${SHADER} NAME)
         message(STATUS ${SHADERNAME})
-		configure_file(${SHADER} ${CMAKE_CURRENT_BINARY_DIR}/shaders/${SHADERNAME} COPYONLY)
+        configure_file(${SHADER} ${CMAKE_CURRENT_BINARY_DIR}/shaders/${SHADERNAME} COPYONLY)
     elseif(UNIX AND NOT APPLE)
-		# If *nix use the copy command
+        # If *nix use the copy command
         file(COPY ${SHADER} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/shaders/)
     elseif(APPLE)
-		# If apple use the custom command macro from before this
+        # If apple use the custom command macro from before this
         # create symbolic link for *.vs *.fs *.gs
         get_filename_component(SHADERNAME ${SHADER} NAME)
         makeLink(${SHADER} ${CMAKE_CURRENT_BINARY_DIR}/shaders/${SHADERNAME} ${PROJECT_NAME})
@@ -77,16 +77,18 @@ MAYA_PLUGIN(${PROJECT_NAME})
 
 # Run python script to unload this plugin from Maya
 message("Unloading Plugin from Maya")
+set(PLUGIN_LOADER_PATH "${PROJECT_SOURCE_DIR}/scripts/dev/load_plugin.py")
 SET(PLUGIN_LOADER_ARGS "-p ${PROJECT_NAME}" "-u")
-execute_process(COMMAND ${MAYA_PYTHON_BIN} dev/scripts/load_plugin.py ${PLUGIN_LOADER_ARGS}
+message("${MAYA_PYTHON_BIN} ${PLUGIN_LOADER_PATH} ${PLUGIN_LOADER_ARGS}")
+execute_process(COMMAND ${MAYA_PYTHON_BIN} ${PLUGIN_LOADER_PATH} ${PLUGIN_LOADER_ARGS}
     WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
 
 # Set output directory
 if(WIN32)
-	set(PLUGIN_OUTPUT_PATH ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.mll)
-	message("Copying ${PLUGIN_OUTPUT_PATH} to ${MAYA_PLUGIN_OUTPUT_DIR}/${PLUGINNAME} if exists!")
-	if(EXISTS ${PLUGIN_OUTPUT_PATH})
-		configure_file(${PROJECT_BINARY_DIR}/${PROJECT_NAME}.mll ${MAYA_PLUGIN_OUTPUT_DIR}/${PLUGINNAME} COPYONLY)
+    set(PLUGIN_OUTPUT_PATH ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.mll)
+    message("Copying ${PLUGIN_OUTPUT_PATH} to ${MAYA_PLUGIN_OUTPUT_DIR}/${PLUGINNAME} if exists!")
+    if(EXISTS ${PLUGIN_OUTPUT_PATH})
+        configure_file(${PROJECT_BINARY_DIR}/${PROJECT_NAME}.mll ${MAYA_PLUGIN_OUTPUT_DIR}/${PLUGINNAME} COPYONLY)
     endif()
 elseif(APPLE)
     set(PLUGIN_OUTPUT_PATH ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.bundle)
@@ -99,5 +101,5 @@ endif(WIN32)
 # Run python script to load the plugin back into Maya
 message("Loading Plugin from Maya")
 SET(PLUGIN_LOADER_ARGS "-p ${PROJECT_NAME}" "-l")
-execute_process(COMMAND ${MAYA_PYTHON_BIN} dev/scripts/load_plugin.py  ${PLUGIN_LOADER_ARGS}
+execute_process(COMMAND ${MAYA_PYTHON_BIN} ${PLUGIN_LOADER_PATH} ${PLUGIN_LOADER_ARGS}
     WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})

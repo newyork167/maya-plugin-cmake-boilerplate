@@ -11,24 +11,58 @@
  */
 void* MyPlugin::creator() { return new MyPlugin; }
 
+MStatus executeMELCommand(std::string melCommand) {
+    // Execute the MEL code
+    MString commandString = MString(melCommand.c_str());
+    return MGlobal::executeCommand(commandString);
+}
+
 /**
 * \brief This will set up a basic menu to call our test command and set up test menu items that don't do anything yet (For you to attach something to!)
 */
-void setupMenu(std::string menuName) {
+void MyPlugin::setupMenu(std::string menuName) {
     // Setup the main menu button
     std::string menuCommand = "";
-    /*menuCommand += "menu -p \"MayaWindow\" -label \"TestPlugin\" \"TestPluginMenu\";";
-    menuCommand += "menuItem -label \"Run\" -command 'TestPlugin';";
+    menuCommand += "if (`menu -exists " + menuName + "`) {";
+    menuCommand += "\tdeleteUI " + menuName + ";";
+    menuCommand += "}";
+    menuCommand += "menu -p \"MayaWindow\" -label \"" + menuName + "\" " + menuName + ";";
+    menuCommand += "menuItem -label \"Run\" -command " + menuName + ";";
     menuCommand += "menuItem - label \"Open\";";
     menuCommand += "menuItem - label \"Save\";";
     menuCommand += "menuItem - divider true;";
     menuCommand += "menuItem - label \"Quit\";";
     menuCommand += "menu - label \"Help\" - helpMenu true;";
-    menuCommand += "menuItem - label \"About Application...\";";*/
+    menuCommand += "menuItem - label \"About Application...\";";
 
     // Execute the MEL code
-    MString commandString = MString(menuCommand.c_str());
-    MGlobal::executeCommand(commandString);
+    MStatus melRunStatus = executeMELCommand(menuCommand);
+}
+
+void MyPlugin::deleteMenu(std::string menuName) {
+    std::string menuCommand = "";
+
+    menuCommand += "if (`menu -exists " + menuName + "`) {";
+    menuCommand += "\tdeleteUI " + menuName + ";";
+    menuCommand += "}";
+
+    MStatus melRunStatus = executeMELCommand(menuCommand);
+}
+
+MSelectionList MyPlugin::getCurrentSelectedObject() {
+	MDagPath node;
+	MObject component;
+	MSelectionList list;
+	MFnDagNode nodeFn;
+	MGlobal::getActiveSelectionList(list);
+	for (unsigned int index = 0; index < list.length(); index++)
+	{
+		list.getDagPath(index, node, component);
+		nodeFn.setObject(node);
+		MStreamUtils::stdOutStream() << nodeFn.name().asChar() << " is selected" << endl;
+	}
+
+    return list;
 }
 
 /**
@@ -36,7 +70,11 @@ void setupMenu(std::string menuName) {
  * https://help.autodesk.com/view/MAYAUL/2019/ENU/?guid=Maya_SDK_MERGED_Command_plug_ins_MPxCommand_html
  */
 MStatus MyPlugin::doIt(const MArgList& argList) {
-    MStreamUtils::stdOutStream() << "Hello World!";
+    MStreamUtils::stdOutStream() << "Running " << PLUGIN_NAME << "!" << std::endl;
+
+    // Test function to get the currently selected objects in the scene
+    MSelectionList selectedObjects = this->getCurrentSelectedObject();
+
     return MS::kSuccess;
 }
 
@@ -49,7 +87,7 @@ MStatus initializePlugin(MObject obj) {
     MFnPlugin plugin(obj, "Enter Your Name", "0.1", "Any");
     MStatus status = plugin.registerCommand(PLUGIN_NAME, MyPlugin::creator);
     CHECK_MSTATUS_AND_RETURN_IT(status);
-    setupMenu("TestPlugin");
+    MyPlugin::setupMenu(PLUGIN_NAME);
     return status;
 }
 
@@ -58,6 +96,7 @@ MStatus initializePlugin(MObject obj) {
  */
 MStatus uninitializePlugin(MObject obj) {
     MFnPlugin plugin(obj);
+    MyPlugin::deleteMenu(PLUGIN_NAME);
     MStatus status = plugin.deregisterCommand(PLUGIN_NAME);
     CHECK_MSTATUS_AND_RETURN_IT(status);
     return status;

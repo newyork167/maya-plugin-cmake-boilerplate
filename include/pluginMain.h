@@ -4,6 +4,11 @@
 #include <maya/MStreamUtils.h>
 #include <maya/MArgList.h>
 #include <maya/MGlobal.h>
+#include <maya/MString.h>
+#include <maya/MDagPath.h>
+#include <maya/MFnDagNode.h>
+#include <maya/MSelectionList.h>
+#include <maya/MIOStream.h>
 #include <fstream>
 #include <iostream> 
 #include <string>
@@ -18,4 +23,9 @@ public:
 	MyPlugin() {};
 	virtual MStatus doIt(const MArgList& args) override;
 	static void* creator();
+	static void setupMenu(std::string menuName);
+	static void deleteMenu(std::string menuName);
+	MSelectionList getCurrentSelectedObject();
+private:
+
 };
